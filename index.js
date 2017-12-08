@@ -85,6 +85,13 @@ function handleItemCheckClicked() {
 function handleDeleteItemClicked() {
   // this function will be responsible for when users want to delete a shopping list
   // item
+  //listener checks for click on js item delete
+  //get itemindex; which item we clicked
+  //remove() -
+  //    //arr.splice(itemIndex, 1);
+  // theres a change to our "STORE"
+  //have2call renderShoppingList
+  
   console.log('`handleDeleteItemClicked` ran')
 }
 
