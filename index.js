@@ -91,6 +91,7 @@ function handleDeleteItemClicked() {
   // item
 
   //listener checks for click on js item delete
+  // line 96-97
 
   $('.js-shopping-list').on('click','.js-item-delete', function(event){
     console.log('`handleDeleteItemClicked` ran');
@@ -100,16 +101,30 @@ function handleDeleteItemClicked() {
   });
 
   //get itemindex; which item we clicked
-  // already defined in line 68-73 
+  // already defined in line 68-73 called at line 98
 
   //remove selected item -
   //    //arr.splice(itemIndex, 1);
-  // line 84-86
+  // line 84-86 called at line 99
 
   // theres a change to our "STORE"
   //have2call renderShoppingList
+  // line 36 called at line 100
 
 }
+
+// User can edit an item title
+
+  // User clicks item named
+
+  // Generates an input bar in place of item name with value set to item name and an update item button next to input bar -- Re-render shopping list, change input to yes
+
+  // User is able to edit value
+
+  // User can submit input
+
+  // Re-render shopping list with input value as new Item Name, input bar and button turned off
+
 
 // this function will be our callback when the page loads. it's responsible for
 // initially rendering the shopping list, and activating our individual functions
