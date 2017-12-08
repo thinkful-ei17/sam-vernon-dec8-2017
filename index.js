@@ -7,10 +7,14 @@ const STORE = [
   {name: 'bread', checked: false, edit: false}
 ];
 
+const DATABASE = {
+  items : STORE ,
+  hideChecked : false ,
+};
 
-function generateItemElement(item, itemIndex, template) {
+function generateItemElement(item, data, itemIndex, template) {
   return `
-    <li class="js-item-index-element" data-item-index="${itemIndex}">
+    <li class="js-item-index-element ${data.hideChecked && item.checked ? 'hidden' : ''}" data-item-index="${itemIndex}">
     ${item.edit ?
       
     `<form id="js-shopping-update">
@@ -30,23 +34,23 @@ function generateItemElement(item, itemIndex, template) {
       </div>
     </li>
     `;
+
 }
 
 
-function generateShoppingItemsString(shoppingList) {
+function generateShoppingItemsString(shoppingList, data) {
   console.log('Generating shopping list element');
 
-  const items = shoppingList.map((item, index) => generateItemElement(item, index));
+  const list = shoppingList.map((item, index) => generateItemElement(item, data, index));
 
-  return items.join('');
+  return list.join('');
 }
 
 
 function renderShoppingList() {
   // render the shopping list in the DOM
   console.log('`renderShoppingList` ran');
-  const shoppingListItemsString = generateShoppingItemsString(STORE);
-
+  const shoppingListItemsString = generateShoppingItemsString(STORE, DATABASE);
   // insert that HTML into the DOM
   $('.js-shopping-list').html(shoppingListItemsString);
 }
@@ -96,30 +100,12 @@ function deleteSelectedItem(array, index){
 }
 
 function handleDeleteItemClicked() {
-  // this function will be responsible for when users want to delete a shopping list
-  // item
-
-  //listener checks for click on js item delete
-  // line 96-97
-
   $('.js-shopping-list').on('click','.js-item-delete', function(event){
     console.log('`handleDeleteItemClicked` ran');
     const itemIndex = getItemIndexFromElement(event.currentTarget);
     deleteSelectedItem(STORE, itemIndex);
     renderShoppingList();
   });
-
-  //get itemindex; which item we clicked
-  // already defined in line 68-73 called at line 98
-
-  //remove selected item -
-  //    //arr.splice(itemIndex, 1);
-  // line 84-86 called at line 99
-
-  // theres a change to our "STORE"
-  //have2call renderShoppingList
-  // line 36 called at line 100
-
 }
 
 function updateItem(array, index, updatedName){
@@ -145,27 +131,29 @@ function toggleEditKey(array, index){
 }
 
 function handleEditItemClicked(index) {
-  // User can edit an item title
 
-  // User clicks item name
   $('.js-shopping-list').on('click','.js-shopping-item', function(event){
     console.log('handleEditItemClicked ran');
-    // Generates an input bar in place of item name with value set to item name and an update item button next to input bar -- Re-render shopping list, change input(our key) to true
-    //edited the generateItemElement + added edit key
-    //toggleEditkey
     const itemIndex = getItemIndexFromElement(event.currentTarget);
-
     toggleEditKey(STORE,itemIndex);
-    // User is able to edit value
-
-    // User can submit input
-
-    // Re-render shopping list with input value as new Item Name, input bar and button turned off
     renderShoppingList();
   });
 
 }
 
+function toggleFilter(data) {
+  data.hideChecked = !data.hideChecked;
+}
+
+function handleFilterClick(){
+  $('#js-filter').click(function(event){
+    console.log('The filter has been clicked');
+    toggleFilter(DATABASE);
+    renderShoppingList();
+  });
+}
+
+// write in functionality for if hideChecked is true
 
 
 // this function will be our callback when the page loads. it's responsible for
@@ -179,6 +167,7 @@ function handleShoppingList() {
   handleEditItemClicked();
   handleEditInputSubmit();
   handleDeleteItemClicked();
+  handleFilterClick();
 }
 
 // when the page loads, call `handleShoppingList`
