@@ -16,7 +16,7 @@ function generateItemElement(item, data, itemIndex, template) {
   return `
     <li class="js-item-index-element ${data.hideChecked && item.checked ? 'hidden' : ''}" data-item-index="${itemIndex}">
     ${item.edit ?
-      
+
     `<form id="js-shopping-update">
       <input type="text" value=${item.name} name="shopping-edit-entry" class="js-shopping-edit-entry" />
       <button type="submit">Update</button>
@@ -40,7 +40,8 @@ function generateItemElement(item, data, itemIndex, template) {
 
 function generateShoppingItemsString(shoppingList, data) {
   console.log('Generating shopping list element');
-
+  //if hideChecked == true
+  //    filter
   const list = shoppingList.map((item, index) => generateItemElement(item, data, index));
 
   return list.join('');
@@ -153,6 +154,22 @@ function handleFilterClick(){
   });
 }
 
+function handleSearchBar() {
+  $('#js-search-form').submit(function(event) {
+    event.preventDefault();
+    console.log('`handleSearchBar` ran');
+    const searchItemName = $('.js-shopping-list-search').val();
+    //
+    //filter items
+      //add a key for search so we toggle
+      //
+
+    //
+    renderShoppingList();
+
+
+  });
+}
 // write in functionality for if hideChecked is true
 
 
@@ -168,6 +185,7 @@ function handleShoppingList() {
   handleEditInputSubmit();
   handleDeleteItemClicked();
   handleFilterClick();
+  handleSearchBar();
 }
 
 // when the page loads, call `handleShoppingList`
