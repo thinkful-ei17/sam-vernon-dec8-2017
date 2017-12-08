@@ -81,18 +81,34 @@ function handleItemCheckClicked() {
   });
 }
 
+function deleteSelectedItem(array, index){
+  console.log(`deleteSelectedItem has been clicked at ${index}`)
+  array.splice(index, 1);
+}
 
 function handleDeleteItemClicked() {
   // this function will be responsible for when users want to delete a shopping list
   // item
+
   //listener checks for click on js item delete
+
+  $('.js-shopping-list').on('click','.js-item-delete', function(event){
+    console.log('`handleDeleteItemClicked` ran');
+    const itemIndex = getItemIndexFromElement(event.currentTarget);
+    deleteSelectedItem(STORE, itemIndex);
+    renderShoppingList();
+  });
+
   //get itemindex; which item we clicked
-  //remove() -
+  // already defined in line 68-73 
+
+  //remove selected item -
   //    //arr.splice(itemIndex, 1);
+  // line 84-86
+
   // theres a change to our "STORE"
   //have2call renderShoppingList
-  
-  console.log('`handleDeleteItemClicked` ran')
+
 }
 
 // this function will be our callback when the page loads. it's responsible for
