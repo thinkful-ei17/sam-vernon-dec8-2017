@@ -1,20 +1,37 @@
 'use strict';
 
 const STORE = [
-  {name: 'apples', checked: false, edit: false},
-  {name: 'oranges', checked: false, edit: false},
-  {name: 'milk', checked: true, edit: false},
-  {name: 'bread', checked: false, edit: false}
+  {name: 'apples', checked: false, edit: false, index: 0 },
+  {name: 'oranges', checked: false, edit: false, index: 1},
+  {name: 'milk', checked: true, edit: false, index: 2},
+  {name: 'bread', checked: false, edit: false, index: 3}
 ];
 
 const DATABASE = {
   items : STORE ,
   hideChecked : false ,
+  search : ""
 };
 
-function generateItemElement(item, data, itemIndex, template) {
+//added index key to STORE, everytime something is added/deleted to the STORE
+//index for each obj is changed with resetIndex
+//resetIndex is not called when hidding or searching for a key. their place in STORE is not changed. a key for them is.
+//
+//generateItemElement was changed; itemIndex that was passed in to item.index
+//generateShoppingItemsString was changed; map no longer decides index of item
+//new function filterSearchKey, filters out STORE to get only the object with specific search key
+//to get orig view back user has to search nothing. 
+function resetIndex(data) {
+  let counter = 0;
+  data.forEach(function(n) {
+    n.index = counter++;
+  });
+
+}
+
+function generateItemElement(item, data, template) {
   return `
-    <li class="js-item-index-element ${data.hideChecked && item.checked ? 'hidden' : ''}" data-item-index="${itemIndex}">
+    <li class="js-item-index-element ${data.hideChecked && item.checked ? 'hidden' : ''}" data-item-index="${item.index}">
     ${item.edit ?
 
     `<form id="js-shopping-update">
@@ -37,12 +54,21 @@ function generateItemElement(item, data, itemIndex, template) {
 
 }
 
+function filterSearchKey (items, data) {
+  let searchArr = items.filter(function (item) {
+    return item.name === data.search;
+  });
+
+  return searchArr;
+}
 
 function generateShoppingItemsString(shoppingList, data) {
   console.log('Generating shopping list element');
   //if hideChecked == true
   //    filter
-  const list = shoppingList.map((item, index) => generateItemElement(item, data, index));
+  //
+
+  const list = shoppingList.map((item) => generateItemElement(item, data));
 
   return list.join('');
 }
@@ -51,7 +77,19 @@ function generateShoppingItemsString(shoppingList, data) {
 function renderShoppingList() {
   // render the shopping list in the DOM
   console.log('`renderShoppingList` ran');
-  const shoppingListItemsString = generateShoppingItemsString(STORE, DATABASE);
+  let shoppingListItemsString = "";
+
+  if (DATABASE.search !== "") {
+    console.log("database-rendershoppingList if is triggered");
+    let searchArr = filterSearchKey(STORE, DATABASE);
+    shoppingListItemsString = generateShoppingItemsString(searchArr, DATABASE);
+   }
+
+   else {
+     console.log("regular-rendershoppingList is triggered");
+     shoppingListItemsString = generateShoppingItemsString(STORE, DATABASE);
+   }
+
   // insert that HTML into the DOM
   $('.js-shopping-list').html(shoppingListItemsString);
 }
@@ -59,7 +97,8 @@ function renderShoppingList() {
 
 function addItemToShoppingList(itemName) {
   console.log(`Adding "${itemName}" to shopping list`);
-  STORE.push({name: itemName, checked: false, edit: false});
+  STORE.push({name: itemName, checked: false, edit: false, index: 0});
+  resetIndex(STORE);
 }
 
 function handleNewItemSubmit() {
@@ -69,6 +108,7 @@ function handleNewItemSubmit() {
     const newItemName = $('.js-shopping-list-entry').val();
     $('.js-shopping-list-entry').val('');
     addItemToShoppingList(newItemName);
+    resetIndex(STORE);
     renderShoppingList();
   });
 }
@@ -105,6 +145,7 @@ function handleDeleteItemClicked() {
     console.log('`handleDeleteItemClicked` ran');
     const itemIndex = getItemIndexFromElement(event.currentTarget);
     deleteSelectedItem(STORE, itemIndex);
+    resetIndex(STORE);
     renderShoppingList();
   });
 }
@@ -154,12 +195,16 @@ function handleFilterClick(){
   });
 }
 
+function toggleSearch(data, itemName) {
+  data.search = itemName;
+  console.log(data.search);
+}
 function handleSearchBar() {
   $('#js-search-form').submit(function(event) {
     event.preventDefault();
     console.log('`handleSearchBar` ran');
     const searchItemName = $('.js-shopping-list-search').val();
-    //
+    toggleSearch(DATABASE, searchItemName);
     //filter items
       //add a key for search so we toggle
       //
